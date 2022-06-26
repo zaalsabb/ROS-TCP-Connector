@@ -199,16 +199,24 @@ namespace Unity.Robotics.ROSTCPConnector
         public IEnumerator GetPortFromServer()
         {
             UnityWebRequest www = UnityWebRequest.Get(serverEndpoint);
-            yield return www.SendWebRequest();
 
-            if (www.result != UnityWebRequest.Result.Success)
+            while (true)
             {
-                Debug.Log(www.error);
+                yield return www.SendWebRequest();
+
+
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(www.error);
+                }
+                else
+                {
+                    RosPort = 9090 + Convert.ToInt32(www.downloadHandler.text);
+                    Connect();
+                    break;
+                }
             }
-            else
-            {
-                RosPort = 9090 + Convert.ToInt32(www.downloadHandler.text);
-            }
+
         }
 
         public void Subscribe<T>(string topic, Action<T> callback) where T : Message
@@ -506,7 +514,6 @@ namespace Unity.Robotics.ROSTCPConnector
 
         void Start()
         {
-            //CallServerEndpoint();
 
             InitializeHUD();
 
@@ -514,9 +521,16 @@ namespace Unity.Robotics.ROSTCPConnector
 
             if (listenForTFMessages)
                 TFSystem.GetOrCreateInstance();
+            
 
             if (ConnectOnStart)
+            {
                 Connect();
+            } else
+            {
+                CallServerEndpoint();
+            }
+                
         }
 
         public void Connect(string ipAddress, int port)
@@ -816,7 +830,6 @@ namespace Unity.Robotics.ROSTCPConnector
                 try
                 {
                     ROSConnection.m_HasConnectionError = true; // until we actually see a reply back, assume there's a problem
-                    instance.CallServerEndpoint();
 
                     try
                     {
