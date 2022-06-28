@@ -17,7 +17,11 @@ namespace Unity.Robotics.ROSTCPConnector
 {
     public class ROSConnection : MonoBehaviour
     {
+        [HideInInspector]
         public int PlayerId;
+
+        [HideInInspector]
+        public bool registered;
 
         public const string k_Version = "v0.7.0";
         public const string k_CompatibleVersionPrefix = "v0.7.";
@@ -215,6 +219,7 @@ namespace Unity.Robotics.ROSTCPConnector
                 {
                     PlayerId = Convert.ToInt32(www.downloadHandler.text);
                     RosPort = 9090 + PlayerId;
+                    registered = true;
                     Connect();
                     break;
                 }
