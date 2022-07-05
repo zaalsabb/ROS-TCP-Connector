@@ -196,7 +196,11 @@ namespace Unity.Robotics.ROSTCPConnector
 
         public void CallServerEndpoint()
         {
-            if (serverEndpoint != null)
+            if (serverEndpoint == null | serverEndpoint == "")
+            {
+                Connect();
+            }
+            else
             {
                 StartCoroutine(GetPortFromServer());
             }
@@ -522,7 +526,6 @@ namespace Unity.Robotics.ROSTCPConnector
 
         void Start()
         {
-
             InitializeHUD();
 
             HudPanel.RegisterHeader(DrawHeaderGUI);
